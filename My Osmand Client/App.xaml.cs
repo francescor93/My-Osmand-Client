@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using static My_Osmand_Client.MainPage;
+using static My_Osmand_Client.Geolocation;
 
 namespace My_Osmand_Client
 {
