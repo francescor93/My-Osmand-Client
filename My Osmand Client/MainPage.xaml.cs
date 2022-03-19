@@ -6,12 +6,12 @@ namespace My_Osmand_Client {
 
     public sealed partial class MainPage : Page {
 
-        private static bool? enabled;
-        private static string deviceId;
-        private static string serverUrl;
-        private static string serverPort;
-        private static string precision;
-        private static string updateFrequency;
+        private static bool? enabled = false;
+        private static string deviceId = "0";
+        private static string serverUrl = "";
+        private static string serverPort = "5055";
+        private static string precision = "";
+        private static string updateFrequency = "60";
 
         public static bool? Enabled { get => enabled; }
         public static string DeviceId { get => deviceId; }
@@ -41,14 +41,14 @@ namespace My_Osmand_Client {
         private void LoadSettings() {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             try {
-                enabled = localSettings.Values["enabled"] as bool?;
-                deviceId = localSettings.Values["deviceId"] as string;
-                serverUrl = localSettings.Values["serverUrl"] as string;
-                serverPort = localSettings.Values["serverPort"] as string;
-                precision = localSettings.Values["precision"] as string;
-                updateFrequency = localSettings.Values["updateFrequency"] as string;
+                if (localSettings.Values.ContainsKey("enabled")) { enabled = localSettings.Values["enabled"] as bool?; }
+                if (localSettings.Values.ContainsKey("deviceId")) { deviceId = localSettings.Values["deviceId"] as string; }
+                if (localSettings.Values.ContainsKey("serverUrl")) { serverUrl = localSettings.Values["serverUrl"] as string; }
+                if (localSettings.Values.ContainsKey("serverPort")) { serverPort = localSettings.Values["serverPort"] as string; }
+                if (localSettings.Values.ContainsKey("precision")) { precision = localSettings.Values["precision"] as string; }
+                if (localSettings.Values.ContainsKey("updateFrequency")) { updateFrequency = localSettings.Values["updateFrequency"] as string; }
             }
-            catch { }
+            catch { System.Diagnostics.Debug.WriteLine("No settings found"); }
         }
 
         private void SaveSettings(object sender, RoutedEventArgs e) {
