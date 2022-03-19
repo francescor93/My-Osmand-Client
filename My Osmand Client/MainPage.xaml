@@ -10,26 +10,26 @@
 
     <Grid>
 
-        <TextBlock Margin="25,25,25,25" VerticalAlignment="Top" Text="My Osmand Client" FontWeight="Bold" FontSize="16" FontFamily="Arial" HorizontalAlignment="Center" />
+        <TextBlock Margin="25,20,25,25" VerticalAlignment="Top" Text="My Osmand Client" FontWeight="Bold" FontSize="18" FontFamily="Arial Black" HorizontalAlignment="Center" />
 
-        <CheckBox Margin="25,50,25,25" VerticalAlignment="Top" x:Name="config_enabled" Content="Enable"/>
+        <CheckBox Margin="25,50,25,25" VerticalAlignment="Top" x:Name="config_enabled" Content="Enable" FontFamily="Arial Narrow" FontSize="14" />
 
-        <TextBlock Margin="25,85,25,25" VerticalAlignment="Top" Text="Device ID" />
+        <TextBlock Margin="25,90,25,25" VerticalAlignment="Top" Text="Device ID" FontFamily="Arial Narrow" FontSize="14" />
         <TextBox Margin="25,110,25,25" VerticalAlignment="Top" x:Name="config_deviceId" InputScope="Number" Text="0" />
 
-        <TextBlock Margin="25,145,25,25" VerticalAlignment="Top" Text="Server URL" />
+        <TextBlock Margin="25,150,25,25" VerticalAlignment="Top" Text="Server URL" FontFamily="Arial Narrow" FontSize="14" />
         <TextBox Margin="25,170,25,25" VerticalAlignment="Top" x:Name="config_serverUrl" InputScope="Text" Text="" />
 
-        <TextBlock Margin="25,205,25,25" VerticalAlignment="Top" Text="Server port" />
+        <TextBlock Margin="25,210,25,25" VerticalAlignment="Top" Text="Server port" FontFamily="Arial Narrow" FontSize="14" />
         <TextBox Margin="25,230,25,25" VerticalAlignment="Top" x:Name="config_serverPort" InputScope="Number" Text="5055" />
 
-        <TextBlock Margin="25,265,25,25" VerticalAlignment="Top" Text="Precision (meters)" />
+        <TextBlock Margin="25,270,25,25" VerticalAlignment="Top" Text="Precision (meters)" FontFamily="Arial Narrow" FontSize="14" />
         <TextBox Margin="25,290,25,25" VerticalAlignment="Top" x:Name="config_precision" InputScope="Number" Text="0" />
 
-        <TextBlock Margin="25,325,25,25" VerticalAlignment="Top" Text="Update frequency (seconds)" />
+        <TextBlock Margin="25,330,25,25" VerticalAlignment="Top" Text="Update frequency (seconds)" FontFamily="Arial Narrow" FontSize="14" />
         <TextBox Margin="25,350,25,25" VerticalAlignment="Top" x:Name="config_updateFrequency" InputScope="Number" Text="60" />
 
-        <Button Margin="25,400,25,25" Content="Save" Click="SaveSettings" VerticalAlignment="Top" Width="310"/>
+        <Button Margin="25,400,25,25" Content="Save" Click="SaveSettings" VerticalAlignment="Top" Width="310" FontFamily="Arial Narrow" FontSize="16" FontWeight="Bold" />
     </Grid>
 
 </Page>
