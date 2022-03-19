@@ -8,8 +8,8 @@
 
   <Identity
     Name="cbe461fb-54fe-4a36-807a-4819ef6b2ae9"
-    Publisher="CN=franc"
-    Version="1.0.0.0" />
+    Publisher="CN=Francesco Rega"
+    Version="0.1.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="cbe461fb-54fe-4a36-807a-4819ef6b2ae9" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
