@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static My_Osmand_Client.MainPage;
 
 namespace My_Osmand_Client
 {
@@ -37,7 +38,7 @@ namespace My_Osmand_Client
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -71,6 +72,9 @@ namespace My_Osmand_Client
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            // Start reading position
+            GetLocation();
         }
 
         /// <summary>
