@@ -10,7 +10,7 @@
 
     <Grid>
 
-        <TextBlock Margin="25,20,25,25" VerticalAlignment="Top" Text="My Osmand Client" FontWeight="Bold" FontSize="18" FontFamily="Arial Black" HorizontalAlignment="Center" />
+        <TextBlock Margin="25,20,25,25" VerticalAlignment="Top" Text="My Osmand Client" FontFamily="Arial Black" FontSize="18" TextAlignment="Center" FontWeight="Bold" />
 
         <CheckBox Margin="25,50,25,25" VerticalAlignment="Top" x:Name="config_enabled" Content="Enable" FontFamily="Arial Narrow" FontSize="14" />
 
@@ -29,7 +29,9 @@
         <TextBlock Margin="25,330,25,25" VerticalAlignment="Top" Text="Update frequency (seconds)" FontFamily="Arial Narrow" FontSize="14" />
         <TextBox Margin="25,350,25,25" VerticalAlignment="Top" x:Name="config_updateFrequency" InputScope="Number" Text="60" />
 
-        <Button Margin="25,400,25,25" Content="Save" Click="SaveSettings" VerticalAlignment="Top" Width="310" FontFamily="Arial Narrow" FontSize="16" FontWeight="Bold" />
+        <Button Margin="25,400,25,25" VerticalAlignment="Top" Content="Save" Click="SaveSettings"  Width="310" FontFamily="Arial Narrow" FontSize="16" FontWeight="Bold" />
+
+        <TextBlock Margin="25,450,25,25" VerticalAlignment="Top" x:Name="infoText" Text="" FontFamily="Arial Narrow" FontSize="14" TextAlignment="Center" TextWrapping="Wrap"  />
     </Grid>
 
 </Page>

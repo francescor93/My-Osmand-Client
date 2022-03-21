@@ -47,11 +47,16 @@ namespace My_Osmand_Client {
                 if (localSettings.Values.ContainsKey("serverPort")) { serverPort = localSettings.Values["serverPort"] as string; }
                 if (localSettings.Values.ContainsKey("precision")) { precision = localSettings.Values["precision"] as string; }
                 if (localSettings.Values.ContainsKey("updateFrequency")) { updateFrequency = localSettings.Values["updateFrequency"] as string; }
+                if (enabled != true) {
+                    WriteInfoMessage("Service is down. Update your settings to activate it.");
+                }
             }
-            catch { System.Diagnostics.Debug.WriteLine("No settings found"); }
+            catch {
+                WriteInfoMessage("An error has occurred while loading settings");
+            }
         }
 
-        private void SaveSettings(object sender, RoutedEventArgs e) {
+        private async void SaveSettings(object sender, RoutedEventArgs e) {
 
             // Write settings to device appdata
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
@@ -62,9 +67,17 @@ namespace My_Osmand_Client {
             localSettings.Values["precision"] = config_precision.Text;
             localSettings.Values["updateFrequency"] = config_updateFrequency.Text;
 
-            // And reload to app instance
+            // Reload to app instance
             LoadSettings();
 
+            // Restart update timer
+            Geolocation geolocationService = new Geolocation();
+            await geolocationService.BeginExtendedExecution();
+
+        }
+
+        public void WriteInfoMessage(string message) {
+            infoText.Text = message;
         }
     }
 }

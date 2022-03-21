@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using static My_Osmand_Client.Geolocation;
+using My_Osmand_Client;
 
 namespace My_Osmand_Client
 {
@@ -73,8 +73,9 @@ namespace My_Osmand_Client
                 Window.Current.Activate();
             }
 
-            // Start reading position
-            GetLocation();
+            // Start reading position in an extended session
+            Geolocation geolocationService = new Geolocation();
+            await geolocationService.BeginExtendedExecution();
         }
 
         /// <summary>

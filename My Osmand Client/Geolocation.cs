@@ -1,47 +1,111 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Web.Http;
 using Windows.Devices.Geolocation;
+using Windows.ApplicationModel.ExtendedExecution;
+using Windows.UI.Core;
 
 namespace My_Osmand_Client {
     internal class Geolocation {
 
-        private static CancellationTokenSource _cts = null;
+        private Timer periodicTimer = null;
+        private ExtendedExecutionSession session = null;
 
-        public static async void GetLocation() {
+        private void ClearExtendedExecution() {
+            if (session != null) {
+                session.Revoked -= SessionRevoked;
+                session.Dispose();
+                session = null;
+            }
 
-            // Loop indefinitely
-            while (true) {
-
-                // If location sending is enabled
-                if ((bool)MainPage.Enabled) {
-
-                    // Get position privacy permission
-                    var accessStatus = await Geolocator.RequestAccessAsync();
-
-                    // If use of the location is permitted, please read it and submit it
-                    if (accessStatus == GeolocationAccessStatus.Allowed) {
-                        _cts = new CancellationTokenSource();
-                        CancellationToken token = _cts.Token;
-                        uint.TryParse(MainPage.Precision, out uint desiredAccuracyInMetersValue);
-                        Geolocator geolocator = new Geolocator { DesiredAccuracyInMeters = desiredAccuracyInMetersValue };
-                        Geoposition pos = await geolocator.GetGeopositionAsync().AsTask(token);
-                        UpdateLocationData(pos);
-                    }
-
-                    // Else print a message
-                    else {
-                        System.Diagnostics.Debug.WriteLine("No location permissions");
-                    }
-                }
-
-                // Wait for updateFrequency seconds before taking another reading
-                int.TryParse(MainPage.UpdateFrequency, out int frequencySeconds);
-                await System.Threading.Tasks.Task.Delay(frequencySeconds * 1000);
+            if (periodicTimer != null) {
+                periodicTimer.Dispose();
+                periodicTimer = null;
             }
         }
 
-        private static async void UpdateLocationData(Geoposition position) {
+        private async void SessionRevoked(object sender, ExtendedExecutionRevokedEventArgs args) {
+            /*await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                switch (args.Reason)
+                {
+                    case ExtendedExecutionRevokedReason.Resumed:
+                        rootPage.NotifyUser("Extended execution revoked due to returning to foreground.", NotifyType.StatusMessage);
+                        break;
+
+                    case ExtendedExecutionRevokedReason.SystemPolicy:
+                        rootPage.NotifyUser("Extended execution revoked due to system policy.", NotifyType.StatusMessage);
+                        break;
+                }
+
+                EndExtendedExecution();
+            });*/
+            System.Diagnostics.Debug.WriteLine("Session revoked");
+        }
+
+        private async Task<Geolocator> StartLocationTrackingAsync() {
+
+            Geolocator geolocator = null;
+
+            // Get position privacy permission
+            var accessStatus = await Geolocator.RequestAccessAsync();
+
+            // If use of the location is permitted, create a new Geolocator instance to return
+            if (accessStatus == GeolocationAccessStatus.Allowed) {
+                uint.TryParse(MainPage.Precision, out uint desiredAccuracyInMetersValue);
+                geolocator = new Geolocator { ReportInterval = 2000, DesiredAccuracyInMeters = desiredAccuracyInMetersValue };
+            }
+
+            // Else print a message
+            else {
+                System.Diagnostics.Debug.WriteLine("No location permissions");
+            }
+
+            return geolocator;
+        }
+
+        private async void OnTimer(object state) {
+            var geolocator = (Geolocator)state;
+            if (geolocator == null) {
+                System.Diagnostics.Debug.WriteLine("No geolocator");
+            }
+            else {
+                Geoposition geoposition = await geolocator.GetGeopositionAsync();
+                if (geoposition == null) {
+                    System.Diagnostics.Debug.WriteLine("Cannot get current location");
+                }
+                else {
+                    UpdateLocationData(geoposition);
+                }
+            }
+        }
+
+        public async Task BeginExtendedExecution() {
+
+            ClearExtendedExecution();
+
+            if ((bool)MainPage.Enabled) {
+                var newSession = new ExtendedExecutionSession {
+                    Reason = ExtendedExecutionReason.LocationTracking,
+                    Description = "Tracking your location"
+                };
+                newSession.Revoked += SessionRevoked;
+                ExtendedExecutionResult result = await newSession.RequestExtensionAsync();
+
+                if (result == ExtendedExecutionResult.Allowed) {
+                    session = newSession;
+                    Geolocator geolocator = await StartLocationTrackingAsync();
+                    int.TryParse(MainPage.UpdateFrequency, out int frequencySeconds);
+                    periodicTimer = new Timer(OnTimer, geolocator, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(frequencySeconds));
+                }
+                else {
+                    newSession.Dispose();
+                }
+            }
+        }
+
+        private async void UpdateLocationData(Geoposition position) {
 
             // Read GPS data
             String latitude = position.Coordinate.Point.Position.Latitude.ToString().Replace(",", ".");
