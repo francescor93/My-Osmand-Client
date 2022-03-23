@@ -6,6 +6,9 @@ namespace My_Osmand_Client {
 
     public sealed partial class MainPage : Page {
 
+        public static MainPage Current;
+        private readonly App _AppReference = App.Current as App;
+
         private static bool? enabled = false;
         private static string deviceId = "0";
         private static string serverUrl = "";
@@ -24,6 +27,7 @@ namespace My_Osmand_Client {
 
             // Initialize app
             InitializeComponent();
+            Current = this;
 
             // Read settings from device appdata
             LoadSettings();
@@ -71,8 +75,7 @@ namespace My_Osmand_Client {
             LoadSettings();
 
             // Restart update timer
-            Geolocation geolocationService = new Geolocation();
-            await geolocationService.BeginExtendedExecution();
+            await _AppReference.geolocator.BeginExtendedExecution();
 
         }
 

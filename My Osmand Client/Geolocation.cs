@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using Windows.Web.Http;
 using Windows.Devices.Geolocation;
 using Windows.ApplicationModel.ExtendedExecution;
-using Windows.UI.Core;
 
 namespace My_Osmand_Client {
-    internal class Geolocation {
+    public sealed partial class Geolocation {
 
         private Timer periodicTimer = null;
         private ExtendedExecutionSession session = null;
+
+        private readonly MainPage mainPage = MainPage.Current;
 
         private void ClearExtendedExecution() {
             if (session != null) {
@@ -26,22 +27,10 @@ namespace My_Osmand_Client {
         }
 
         private async void SessionRevoked(object sender, ExtendedExecutionRevokedEventArgs args) {
-            /*await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                switch (args.Reason)
-                {
-                    case ExtendedExecutionRevokedReason.Resumed:
-                        rootPage.NotifyUser("Extended execution revoked due to returning to foreground.", NotifyType.StatusMessage);
-                        break;
-
-                    case ExtendedExecutionRevokedReason.SystemPolicy:
-                        rootPage.NotifyUser("Extended execution revoked due to system policy.", NotifyType.StatusMessage);
-                        break;
-                }
-
-                EndExtendedExecution();
-            });*/
-            System.Diagnostics.Debug.WriteLine("Session revoked");
+            try {
+                mainPage.WriteInfoMessage("Session revoked");
+                await BeginExtendedExecution();
+            } catch { }
         }
 
         private async Task<Geolocator> StartLocationTrackingAsync() {
@@ -59,7 +48,7 @@ namespace My_Osmand_Client {
 
             // Else print a message
             else {
-                System.Diagnostics.Debug.WriteLine("No location permissions");
+                mainPage.WriteInfoMessage("No location permissions");
             }
 
             return geolocator;
@@ -68,12 +57,12 @@ namespace My_Osmand_Client {
         private async void OnTimer(object state) {
             var geolocator = (Geolocator)state;
             if (geolocator == null) {
-                System.Diagnostics.Debug.WriteLine("No geolocator");
+                mainPage.WriteInfoMessage("No geolocator");
             }
             else {
                 Geoposition geoposition = await geolocator.GetGeopositionAsync();
                 if (geoposition == null) {
-                    System.Diagnostics.Debug.WriteLine("Cannot get current location");
+                    mainPage.WriteInfoMessage("Cannot get current location");
                 }
                 else {
                     UpdateLocationData(geoposition);
@@ -92,12 +81,13 @@ namespace My_Osmand_Client {
                 };
                 newSession.Revoked += SessionRevoked;
                 ExtendedExecutionResult result = await newSession.RequestExtensionAsync();
-
+                
                 if (result == ExtendedExecutionResult.Allowed) {
                     session = newSession;
                     Geolocator geolocator = await StartLocationTrackingAsync();
                     int.TryParse(MainPage.UpdateFrequency, out int frequencySeconds);
                     periodicTimer = new Timer(OnTimer, geolocator, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(frequencySeconds));
+                    mainPage.WriteInfoMessage("Service is running");
                 }
                 else {
                     newSession.Dispose();

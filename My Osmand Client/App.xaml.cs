@@ -23,6 +23,9 @@ namespace My_Osmand_Client
     /// </summary>
     sealed partial class App : Application
     {
+
+        public Geolocation geolocator;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -74,8 +77,8 @@ namespace My_Osmand_Client
             }
 
             // Start reading position in an extended session
-            Geolocation geolocationService = new Geolocation();
-            await geolocationService.BeginExtendedExecution();
+            geolocator = new Geolocation();
+            await geolocator.BeginExtendedExecution();
         }
 
         /// <summary>
