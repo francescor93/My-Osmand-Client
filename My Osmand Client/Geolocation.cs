@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Windows.Web.Http;
 using Windows.Devices.Geolocation;
 using Windows.ApplicationModel.ExtendedExecution;
+using Windows.Devices.Power;
 
 namespace My_Osmand_Client {
     public sealed partial class Geolocation {
@@ -102,6 +103,10 @@ namespace My_Osmand_Client {
             String longitude = position.Coordinate.Point.Position.Longitude.ToString().Replace(",", ".");
             String accuracy = position.Coordinate.Accuracy.ToString().Replace(",", ".").Replace(",", ".");
 
+            // Read battery data
+            BatteryReport batteryReport = Battery.AggregateBattery.GetReport();
+            String batteryPercentage = (((double)batteryReport.RemainingCapacityInMilliwattHours.Value / (double)batteryReport.FullChargeCapacityInMilliwattHours.Value) * 100).ToString();
+
             // Calculate current unix timestamp
             DateTime localDate = DateTime.Now;
             DateTimeOffset dto = new DateTimeOffset(localDate.Year, localDate.Month, localDate.Day, localDate.Hour, localDate.Minute, localDate.Second, TimeSpan.Zero);
@@ -109,7 +114,7 @@ namespace My_Osmand_Client {
 
             // Build url
             HttpClient httpClient = new HttpClient();
-            Uri uri = new Uri(MainPage.ServerUrl + ":" + MainPage.ServerPort + "/?id=" + MainPage.DeviceId + "&timestamp=" + timestamp + "&lat=" + latitude + "&lon=" + longitude + "&accuracy=" + accuracy);
+            Uri uri = new Uri(MainPage.ServerUrl + ":" + MainPage.ServerPort + "/?id=" + MainPage.DeviceId + "&timestamp=" + timestamp + "&lat=" + latitude + "&lon=" + longitude + "&accuracy=" + accuracy + "&batt=" + batteryPercentage);
 
             // Send HTTP request.
             HttpStringContent content = new HttpStringContent("");
